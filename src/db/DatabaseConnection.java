@@ -6,37 +6,32 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class DatabaseConnection {
-    // Database connection parameters
     private static final String URL = "jdbc:mysql://localhost:3306/university_db";
     private static final String USER = "root";
     private static final String PASSWORD = "42069";
 
-    // Private constructor to prevent instantiation
     private DatabaseConnection() {}
 
     public static Connection getConnection() {
         try {
-            // Explicitly load the MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-            
-            // Attempt to establish the database connection
+            System.out.println("MySQL JDBC Driver loaded successfully.");
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Database connection successful.");
             return connection;
         } catch (ClassNotFoundException ex) {
-            // Handle driver not found error
             System.err.println("MySQL JDBC Driver not found: " + ex.getMessage());
+            ex.printStackTrace(); // Add stack trace for debugging
             JOptionPane.showMessageDialog(null, 
-                "MySQL JDBC Driver not found. Please add the driver to your classpath.");
+                "MySQL JDBC Driver not found. Please add the driver to your classpath.\n" +
+                "Error: " + ex.getMessage());
             return null;
         } catch (SQLException ex) {
-            // Provide more detailed error information
             System.err.println("Database connection error:");
             System.err.println("Error Code: " + ex.getErrorCode());
             System.err.println("SQL State: " + ex.getSQLState());
             System.err.println("Error Message: " + ex.getMessage());
-            
-            // Show a more informative error dialog
+            ex.printStackTrace(); // Add stack trace for debugging
             JOptionPane.showMessageDialog(null, 
                 "Failed to connect to database.\n" +
                 "Error: " + ex.getMessage() + "\n" +
@@ -45,7 +40,6 @@ public class DatabaseConnection {
         }
     }
 
-    // Utility method to safely close the connection
     public static void closeConnection(Connection connection) {
         if (connection != null) {
             try {
